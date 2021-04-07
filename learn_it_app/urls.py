@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 
 from card.models import Image, Deck, Card
 from card.views import DeckListView, DeckDetailView, QuestionDetailView, AnswerDetailView, home, DeckCreateView, \
-    DeckUpdateView, DeckDeleteView, CardCreateView
+    DeckUpdateView, DeckDeleteView, CardCreateView, next_card
 
 admin.site.register(Image)
 admin.site.register(Deck)
@@ -23,6 +23,7 @@ urlpatterns = [
     path('deck/<int:pk>/add_card/', CardCreateView.as_view(), name="add-card"),
     path('deck/<int:deck_pk>/question/<int:i>/', QuestionDetailView.as_view(), name='question-detail'),
     path('deck/<int:deck_pk>/question/<int:i>/answer/', AnswerDetailView.as_view(), name='answer-detail'),
+    path('deck/<int:deck_pk>/question/<int:i>/next', next_card, name='next-card'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 

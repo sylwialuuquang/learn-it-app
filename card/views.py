@@ -54,6 +54,19 @@ class DeckDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return self.request.user == self.get_object().author
 
 
+def next_card(request, deck_pk, i):
+    if request.method == 'POST':
+        card = Card.objects.get(id=request.POST['cardId'])
+        if 'markAsLearned' in request.POST:
+            card.mark_as_learned()
+        else:
+            card.mark_as_not_learned()
+    if i < int(request.POST['cardQty']):
+        return redirect('question-detail', deck_pk, i + 1)
+    else:
+        return redirect('deck-detail', deck_pk)
+
+
 class QuestionDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Card
     template_name = 'card_question.html'

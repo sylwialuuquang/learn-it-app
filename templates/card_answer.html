@@ -8,10 +8,17 @@
         <div class="m-4">
             <h5>{{ card.answer }}</h5>
         </div>
-        {% if card_no < cards_qty %}
-            <a href="{% url 'question-detail' deck_pk next_card_no %}" class="btn btn-primary">Next card</a>
-        {% else %}
-            <a href="{% url 'deck-detail' deck_pk %}" class="btn btn-primary">Finish</a>
-        {% endif %}
+        <div class="">
+            <form method="post" action="{% url 'next-card' deck_pk card_no %}" class="d-flex p-2 align-items-center">
+                {% csrf_token %}
+                <input type="hidden" name="cardQty" value="{{ cards_qty }}"/>
+                <input type="hidden" name="cardId" value="{{ card.id}}"/>
+                <button type="submit" class="btn btn-primary m-1">{% if card_no < cards_qty %} Next Card {% else %} Finish {% endif %}</button>
+                <div class="form-check m-2">
+                    <input class="form-check-input" type="checkbox" name="markAsLearned" id="flexCheckDefault" {% if card.status == "MASTERED" %} checked {% endif%}/>
+                    <label class="form-check-label" for="flexCheckDefault">Learned</label>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}

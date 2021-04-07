@@ -41,3 +41,11 @@ class Card(Model):
 
     def __str__(self):
         return self.question
+
+    def mark_as_learned(self):
+        self.status = "MASTERED"
+        self.save()
+
+    def mark_as_not_learned(self):
+        self.status = "LEARNING"
+        self.save()
