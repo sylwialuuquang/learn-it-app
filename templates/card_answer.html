@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="d-flex flex-column justify-content-around align-items-center">
+        {% if card.answer_img %}
+            <img src="{{ card.answer_img.img.url }}" class="card-img-top card-img mt-4" alt="answer-img">
+        {% endif %}
+        <div class="m-4">
+            <h5>{{ card.answer }}</h5>
+        </div>
+        {% if card_no < cards_qty %}
+            <a href="{% url 'question-detail' deck_pk next_card_no %}" class="btn btn-primary">Next card</a>
+        {% else %}
+            <a href="{% url 'deck-detail' deck_pk %}" class="btn btn-primary">Finish</a>
+        {% endif %}
+    </div>
+{% endblock %}

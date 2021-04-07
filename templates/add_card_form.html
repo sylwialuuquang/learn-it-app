@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+{{ form.media }}
+  <form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+
+    {{ forms.card_form.as_p }}
+    <label>Deck</label>
+    {{ forms.deck_form.as_p }}
+    <label>Question Img</label>
+    {{ forms.question_image_form.as_p }}
+    <label>Answer Img</label>
+    {{ forms.answer_image_form.as_p }}
+    <input type="Submit" value="Submit" class="btn btn-primary">
+  </form>
+{% endblock %}
