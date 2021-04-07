@@ -32,7 +32,7 @@
                         </span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="#">Show All Cards</a></li>
+                        <li><a class="dropdown-item" href="{% url 'card-list' deck.id %}">Show All Cards</a></li>
                         <li><a class="dropdown-item" href="{% url 'add-card' deck.id %}">Add Card</a></li>
                         <li><a class="dropdown-item" href="{% url 'deck-update' deck.id %}">Change Name</a></li>
                         <li><a class="dropdown-item" href="{% url 'deck-delete' deck.id %}">Delete Deck</a></li>

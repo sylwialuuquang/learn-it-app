@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+{{ form.media }}
+  <form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="fieldWrapper d-flex flex-column align-items-start">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+            <div class="p-2">
+                {% if field.label == "Question" %}
+                    {% if card.question_img %}
+                        <img src="{{ card.question_img.img.url }}" class="card-update-img" alt="question-img">
+                    {% else %}
+                        <p>No image added</p>
+                    {% endif %}
+                    <label for="questionImg">Add/Change question image:</label>
+                    <input type="file" id="questionImg" name="new_question_image" accept="image/png, image/jpeg, image,jpg">
+                {% elif field.label == "Answer" %}
+                    {% if card.answer_img %}
+                        <img src="{{ card.answer_img.img.url }}" class="card-update-img" alt="answer-img">
+                    {% else %}
+                        <p>No image added</p>
+                    {% endif %}
+                    <label for="answerImg">Add/Change answer image:</label>
+                    <input type="file" id="answerImg" name="new_answer_image" accept="image/png, image/jpeg, image,jpg">
+                {% endif %}
+                {% if field.help_text %}
+                    <p class="help">{{ field.help_text|safe }}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+    <input type="submit" value="Submit" class="btn btn-primary">
+  </form>
+{% endblock %}

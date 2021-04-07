@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from multi_form_view import MultiModelFormView
 
-from .models import Deck, Card
+from .models import Deck, Card, Image
 from .forms import DeckForm, CardForm, ImageForm
 
 
@@ -20,6 +20,19 @@ def error_403_view(request, exception):
 
 def home(request):
     return render(request, 'base.html')
+
+
+def next_card(request, deck_pk, i):
+    if request.method == 'POST':
+        card = Card.objects.get(id=request.POST['cardId'])
+        if 'markAsLearned' in request.POST:
+            card.mark_as_learned()
+        else:
+            card.mark_as_not_learned()
+    if i < int(request.POST['cardQty']):
+        return redirect('question-detail', deck_pk, i + 1)
+    else:
+        return redirect('deck-detail', deck_pk)
 
 
 class DeckListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -52,19 +65,6 @@ class DeckDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def test_func(self):
         return self.request.user == self.get_object().author
-
-
-def next_card(request, deck_pk, i):
-    if request.method == 'POST':
-        card = Card.objects.get(id=request.POST['cardId'])
-        if 'markAsLearned' in request.POST:
-            card.mark_as_learned()
-        else:
-            card.mark_as_not_learned()
-    if i < int(request.POST['cardQty']):
-        return redirect('question-detail', deck_pk, i + 1)
-    else:
-        return redirect('deck-detail', deck_pk)
 
 
 class QuestionDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -116,6 +116,14 @@ class AnswerDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def test_func(self):
         return self.request.user == self.get_object().deck.author
+
+
+class CardListVIew(ListView):
+    template_name = 'card_list.html'
+    context_object_name = 'cards'
+
+    def get_queryset(self):
+        return Card.objects.filter(deck__id=self.kwargs['pk'])
 
 
 class DeckCreateView(CreateView):
@@ -188,5 +196,38 @@ class CardCreateView(MultiModelFormView):
         return super(CardCreateView, self).forms_valid(forms)
 
 
+class CardUpdateView(UpdateView):
+    model = Card
+    form_class = CardForm
+    template_name = 'card_update_form.html'
+    success_url = reverse_lazy('deck-list')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['deck_id'] = self.kwargs['deck_pk']
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['card'] = Card.objects.get(id=self.kwargs['pk'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        tmp = super().post(request, **kwargs)
+        if 'new_question_image' in request.FILES:
+            print(request.FILES['new_question_image'])
+            question_img = Image(img=request.FILES['new_question_image'])
+            question_img.save()
+            self.object.update_question_img(question_img)
+        if 'new_answer_image' in request.FILES:
+            answer_img = Image(img=request.FILES['new_answer_image'])
+            answer_img.save()
+            self.object.update_answer_img(answer_img)
+        return tmp
+
+
+class CardDeleteView(DeleteView):
+    model = Card
+    template_name = 'card_confirm_delete.html'
+    success_url = reverse_lazy('deck-list')
 

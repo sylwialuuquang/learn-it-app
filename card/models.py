@@ -49,3 +49,11 @@ class Card(Model):
     def mark_as_not_learned(self):
         self.status = "LEARNING"
         self.save()
+
+    def update_question_img(self, img):
+        self.question_img = img
+        self.save()
+
+    def update_answer_img(self, img):
+        self.answer_img = img
+        self.save()

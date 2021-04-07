@@ -24,3 +24,8 @@ body {
     max-height: 500px;
     width: auto;
 }
+
+.card-update-img {
+    max-height: 100px;
+    width: auto;
+}
