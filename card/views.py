@@ -35,26 +35,21 @@ def next_card(request, deck_pk, i):
         return redirect('deck-detail', deck_pk)
 
 
-class DeckListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+class DeckListView(LoginRequiredMixin, ListView):
     template_name = 'deck_list.html'
     context_object_name = 'decks'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_queryset(self):
         return Deck.objects.filter(author=self.request.user)
-
-    def test_func(self):
-        if self.get_queryset():
-            return self.request.user == self.get_queryset().first().author
-        return False
 
 
 class DeckDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Deck
     template_name = 'deck_detail.html'
     context_object_name = 'deck'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_context_data(self, **kwargs):
@@ -71,7 +66,7 @@ class QuestionDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Card
     template_name = 'card_question.html'
     context_object_name = 'card'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_object(self, queryset=None):
@@ -95,7 +90,7 @@ class AnswerDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = Card
     template_name = 'card_answer.html'
     context_object_name = 'card'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_object(self, queryset=None):
@@ -121,7 +116,7 @@ class AnswerDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 class CardListVIew(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = 'card_list.html'
     context_object_name = 'cards'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_queryset(self):
@@ -137,7 +132,7 @@ class CardListVIew(LoginRequiredMixin, UserPassesTestMixin, ListView):
 class DeckCreateView(LoginRequiredMixin, CreateView):
     form_class = DeckForm
     template_name = 'form.html'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_form_kwargs(self):
@@ -150,7 +145,7 @@ class DeckUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Deck
     form_class = DeckForm
     template_name = 'form.html'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_form_kwargs(self):
@@ -169,7 +164,7 @@ class DeckDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Deck
     template_name = 'deck_confirm_delete.html'
     success_url = reverse_lazy('deck-list')
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def test_func(self):
@@ -186,7 +181,7 @@ class CardCreateView(LoginRequiredMixin, UserPassesTestMixin, MultiModelFormView
         'answer_image_form': ImageForm,
     }
     template_name = 'add_card_form.html'
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_form_kwargs(self):
@@ -233,7 +228,7 @@ class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = CardForm
     template_name = 'card_update_form.html'
     success_url = reverse_lazy('deck-list')
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_form_kwargs(self):
@@ -270,7 +265,7 @@ class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Card
     template_name = 'card_confirm_delete.html'
     success_url = reverse_lazy('deck-list')
-    login_url = '/login/'
+    login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def test_func(self):

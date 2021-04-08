@@ -1,16 +1,16 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 
 from card.models import Image, Deck, Card
 from card.views import DeckListView, DeckDetailView, QuestionDetailView, AnswerDetailView, home, DeckCreateView, \
     DeckUpdateView, DeckDeleteView, CardCreateView, next_card, CardListVIew, CardDeleteView, CardUpdateView
 
-admin.site.register(Image)
-admin.site.register(Deck)
-admin.site.register(Card)
+# admin.site.register(Image)
+# admin.site.register(Deck)
+# admin.site.register(Card)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,8 +27,7 @@ urlpatterns = [
     path('deck/<int:deck_pk>/question/<int:i>/', QuestionDetailView.as_view(), name='question-detail'),
     path('deck/<int:deck_pk>/question/<int:i>/answer/', AnswerDetailView.as_view(), name='answer-detail'),
     path('deck/<int:deck_pk>/question/<int:i>/next', next_card, name='next-card'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('accounts/', include('accounts.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
