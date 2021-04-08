@@ -118,17 +118,27 @@ class AnswerDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return self.request.user == self.get_object().deck.author
 
 
-class CardListVIew(ListView):
+class CardListVIew(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = 'card_list.html'
     context_object_name = 'cards'
+    login_url = '/login/'
+    redirect_field_name = 'login'
 
     def get_queryset(self):
         return Card.objects.filter(deck__id=self.kwargs['pk'])
 
+    def test_func(self):
+        try:
+            return self.request.user == Deck.objects.get(id=self.kwargs['pk']).author
+        except ObjectDoesNotExist:
+            raise Http404()
 
-class DeckCreateView(CreateView):
+
+class DeckCreateView(LoginRequiredMixin, CreateView):
     form_class = DeckForm
     template_name = 'form.html'
+    login_url = '/login/'
+    redirect_field_name = 'login'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -136,32 +146,48 @@ class DeckCreateView(CreateView):
         return kwargs
 
 
-class DeckUpdateView(UpdateView):
+class DeckUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Deck
     form_class = DeckForm
     template_name = 'form.html'
+    login_url = '/login/'
+    redirect_field_name = 'login'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
+    def test_func(self):
+        try:
+            return self.request.user == Deck.objects.get(id=self.kwargs['pk']).author
+        except ObjectDoesNotExist:
+            raise Http404()
 
-class DeckDeleteView(DeleteView):
+
+class DeckDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Deck
     template_name = 'deck_confirm_delete.html'
     success_url = reverse_lazy('deck-list')
+    login_url = '/login/'
+    redirect_field_name = 'login'
+
+    def test_func(self):
+        try:
+            return self.request.user == Deck.objects.get(id=self.kwargs['pk'])
+        except ObjectDoesNotExist:
+            raise Http404()
 
 
-class CardCreateView(MultiModelFormView):
+class CardCreateView(LoginRequiredMixin, UserPassesTestMixin, MultiModelFormView):
     form_classes = {
         'card_form': CardForm,
-        # 'deck_form': DeckForm,
         'question_image_form': ImageForm,
         'answer_image_form': ImageForm,
     }
-    # record_id = None
     template_name = 'add_card_form.html'
+    login_url = '/login/'
+    redirect_field_name = 'login'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -195,12 +221,20 @@ class CardCreateView(MultiModelFormView):
         card.save()
         return super(CardCreateView, self).forms_valid(forms)
 
+    def test_func(self):
+        try:
+            return self.request.user == Deck.objects.get(id=self.kwargs['pk']).author
+        except ObjectDoesNotExist:
+            raise Http404()
 
-class CardUpdateView(UpdateView):
+
+class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Card
     form_class = CardForm
     template_name = 'card_update_form.html'
     success_url = reverse_lazy('deck-list')
+    login_url = '/login/'
+    redirect_field_name = 'login'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -225,9 +259,23 @@ class CardUpdateView(UpdateView):
             self.object.update_answer_img(answer_img)
         return tmp
 
+    def test_func(self):
+        try:
+            return self.request.user == Deck.objects.get(id=self.kwargs['deck_pk'])
+        except ObjectDoesNotExist:
+            raise Http404()
 
-class CardDeleteView(DeleteView):
+
+class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Card
     template_name = 'card_confirm_delete.html'
     success_url = reverse_lazy('deck-list')
+    login_url = '/login/'
+    redirect_field_name = 'login'
+
+    def test_func(self):
+        try:
+            return self.request.user == Deck.objects.get(id=self.kwargs['deck_pk'])
+        except ObjectDoesNotExist:
+            raise Http404()
 
