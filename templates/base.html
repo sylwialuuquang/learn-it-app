@@ -37,7 +37,7 @@
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="{% url 'logout' %}">logout</a></li>
-                <li><a class="dropdown-item" href="{% url 'home' %}">change password</a></li>
+                <li><a class="dropdown-item" href="{% url 'change-password' %}">change password</a></li>
               </ul>
               {% else %}
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -45,6 +45,7 @@
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li><a class="dropdown-item" href="{% url 'login' %}">login</a></li>
+                <li><a class="dropdown-item" href="{% url 'sign-up' %}">sign up</a></li>
               </ul>
               {% endif %}
             </li>
