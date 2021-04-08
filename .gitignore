@@ -1,6 +1,7 @@
 venv
 .idea
 db.sqlite3
-media
+media/images/*
+!media/images/default_deck.jpg
 **/__pycache__
 **/migrations
