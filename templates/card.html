@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="card card-body">
+        {% if card.question_img %}
+        <div class="text-center">
+            <img src="{{ card.question_img.img.url }}" class="card-img-top card-img text-center p-2" alt="question-img">
+        </div>
+        {% endif %}
+        <div class="m-2">
+            <h5>{{ card.question }}</h5>
+        </div>
+    </div>
+    <div class="d-flex flex-row align-items-center p-2">
+        <div>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Show answer
+            </button>
+        </div>
+        <div class="form-check m-2">
+            <input class="form-check-input" type="checkbox" name="markAsLearned" id="cardStatus" {% if card.status == "MASTERED" %} checked {% endif%}/>
+            <label class="form-check-label" for="cardStatus">Learned</label>
+        </div>
+    </div>
+
+    <div class="collapse mt-2" id="collapseExample">
+        <div class="card card-body">
+
+            {% if card.answer_img %}
+            <div class="text-center">
+                <img src="{{ card.answer_img.img.url }}" class="card-img-top card-img p-2" alt="answer-img">
+            </div>
+            {% endif %}
+            <div class="m-2">
+                <h5>{{ card.answer }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center p-2">
+        <form method="post" action="{% url 'next-card' deck_pk card_no %}" class="d-flex p-1">
+            {% csrf_token %}
+            <input type="hidden" name="cardQty" value="{{ cards_qty }}"/>
+            <input type="hidden" name="cardId" value="{{ card.id}}"/>
+            <button type="submit" class="btn btn-primary">{% if card_no < cards_qty %} Next Card {% else %} Finish {% endif %}</button>
+            <input type="hidden" name="markAsLearned" id="sendStatus" value="{{card.status}}"/>
+            <input type="hidden" name="markAsLearnedInit" id="initialStatus" value="{{card.status}}"/>
+        </form>
+        <form method="post" action="{% url 'next-red-card' deck_pk card_no %}" class="d-flex p-1">
+            {% csrf_token %}
+            <input type="hidden" name="cardQty" value="{{ cards_qty }}"/>
+            <input type="hidden" name="cardId" value="{{ card.id}}"/>
+            <input type="hidden" name="markAsLearned" id="sendStatus2" value="{{card.status}}"/>
+            <input type="hidden" name="markAsLearnedInit" id="initialStatus2" value="{{card.status}}"/>
+            {% if next_red > -1 %}
+            <button type="submit" class="btn btn-primary">Next Red Card</button>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

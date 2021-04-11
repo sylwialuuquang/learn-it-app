@@ -4,7 +4,11 @@
     <div class="row row-cols-1 row-cols-md-3 g-6 p-4">
         {% for card in cards %}
         <div class="col p-4">
-            <div class="card h-100">
+            {% if card.status == "MASTERED" %}
+            <div class="card h-100 border-success">
+            {% else %}
+            <div class="card h-100 border-danger">
+            {% endif %}
                 <div class="d-flex justify-content-between card-header text-muted">
                     #{{ forloop.counter }}
                     <div>
@@ -20,7 +24,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body d-flex flex-column justify-content-center align-items-center border border-3">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
                     <p class="card-text">{{ card.question|truncatechars:80 }}</p>
                 </div>
             </div>

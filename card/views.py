@@ -25,14 +25,60 @@ def home(request):
 def next_card(request, deck_pk, i):
     if request.method == 'POST':
         card = Card.objects.get(id=request.POST['cardId'])
+        print('markAsLearned', request.POST['markAsLearned'])
+        print('markAsLearnedInit', request.POST['markAsLearnedInit'])
+        if request.POST['markAsLearned'] != request.POST['markAsLearnedInit']:
+
+            if request.POST['markAsLearned'] == "MASTERED":
+                card.mark_as_learned()
+            else:
+                card.mark_as_not_learned()
+    if i < int(request.POST['cardQty']):
+        return redirect('card', deck_pk, i + 1)
+    else:
+        return redirect('deck-detail', deck_pk)
+
+
+def next_red_card(request, deck_pk, i):
+    if request.method == 'POST':
+        card = Card.objects.get(id=request.POST['cardId'])
         if 'markAsLearned' in request.POST:
             card.mark_as_learned()
         else:
             card.mark_as_not_learned()
-    if i < int(request.POST['cardQty']):
-        return redirect('question-detail', deck_pk, i + 1)
-    else:
-        return redirect('deck-detail', deck_pk)
+        if i < int(request.POST['cardQty']):
+            index = Deck.next_red_card_index(deck_pk, i)
+            return redirect('card', deck_pk, index)
+        else:
+            return redirect('deck-detail', deck_pk)
+
+
+class QACardView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = Card
+    template_name = 'card.html'
+    context_object_name = 'card'
+    login_url = '/accounts/login/'
+    redirect_field_name = 'login'
+
+    def get_object(self, queryset=None):
+        try:
+            deck_pk = self.kwargs['deck_pk']
+            i = self.kwargs['index']
+            return Card.objects.filter(deck__id=deck_pk)[i-1]
+        except IndexError:
+            raise Http404()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['card_no'] = self.kwargs['index']
+        context['next_card_no'] = self.kwargs['index']+1
+        context['deck_pk'] = self.kwargs['deck_pk']
+        context['cards_qty'] = len(Card.objects.filter(deck__id=self.kwargs['deck_pk']))
+        context['next_red'] = Deck.next_red_card_index(self.kwargs['deck_pk'], self.kwargs['index'])
+        return context
+
+    def test_func(self):
+        return self.request.user == self.get_object().deck.author
 
 
 class DeckListView(LoginRequiredMixin, ListView):
@@ -60,57 +106,6 @@ class DeckDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
     def test_func(self):
         return self.request.user == self.get_object().author
-
-
-class QuestionDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-    model = Card
-    template_name = 'card_question.html'
-    context_object_name = 'card'
-    login_url = '/accounts/login/'
-    redirect_field_name = 'login'
-
-    def get_object(self, queryset=None):
-        try:
-            deck_pk = self.kwargs['deck_pk']
-            i = self.kwargs['i']
-            return Card.objects.filter(deck__id=deck_pk)[i-1]
-        except IndexError:
-            raise Http404()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['card_no'] = self.kwargs['i']
-        return context
-
-    def test_func(self):
-        return self.request.user == self.get_object().deck.author
-
-
-class AnswerDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
-    model = Card
-    template_name = 'card_answer.html'
-    context_object_name = 'card'
-    login_url = '/accounts/login/'
-    redirect_field_name = 'login'
-
-    def get_object(self, queryset=None):
-        try:
-            deck_pk = self.kwargs['deck_pk']
-            i = self.kwargs['i']
-            return Card.objects.filter(deck__id=deck_pk)[i-1]
-        except IndexError:
-            raise Http404()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['card_no'] = self.kwargs['i']
-        context['next_card_no'] = self.kwargs['i']+1
-        context['deck_pk'] = self.kwargs['deck_pk']
-        context['cards_qty'] = len(Card.objects.filter(deck__id=self.kwargs['deck_pk']))
-        return context
-
-    def test_func(self):
-        return self.request.user == self.get_object().deck.author
 
 
 class CardListVIew(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -256,7 +251,7 @@ class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         try:
-            return self.request.user == Deck.objects.get(id=self.kwargs['deck_pk'])
+            return self.request.user == Deck.objects.get(id=self.kwargs['deck_pk']).author
         except ObjectDoesNotExist:
             raise Http404()
 
