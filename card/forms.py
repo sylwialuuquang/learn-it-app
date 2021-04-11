@@ -11,6 +11,7 @@ class DeckForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.author = kwargs.pop('user')
         super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update({'class': 'form-control'})
 
     def save(self, *args, **kwargs):
         self.instance.author = self.author

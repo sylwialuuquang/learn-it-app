@@ -25,10 +25,7 @@ def home(request):
 def next_card(request, deck_pk, i):
     if request.method == 'POST':
         card = Card.objects.get(id=request.POST['cardId'])
-        print('markAsLearned', request.POST['markAsLearned'])
-        print('markAsLearnedInit', request.POST['markAsLearnedInit'])
         if request.POST['markAsLearned'] != request.POST['markAsLearnedInit']:
-
             if request.POST['markAsLearned'] == "MASTERED":
                 card.mark_as_learned()
             else:
@@ -42,10 +39,11 @@ def next_card(request, deck_pk, i):
 def next_red_card(request, deck_pk, i):
     if request.method == 'POST':
         card = Card.objects.get(id=request.POST['cardId'])
-        if 'markAsLearned' in request.POST:
-            card.mark_as_learned()
-        else:
-            card.mark_as_not_learned()
+        if request.POST['markAsLearned'] != request.POST['markAsLearnedInit']:
+            if request.POST['markAsLearned'] == "MASTERED":
+                card.mark_as_learned()
+            else:
+                card.mark_as_not_learned()
         if i < int(request.POST['cardQty']):
             index = Deck.next_red_card_index(deck_pk, i)
             return redirect('card', deck_pk, index)
@@ -124,22 +122,48 @@ class CardListVIew(LoginRequiredMixin, UserPassesTestMixin, ListView):
             raise Http404()
 
 
-class DeckCreateView(LoginRequiredMixin, CreateView):
-    form_class = DeckForm
-    template_name = 'form.html'
+class DeckCreateView(LoginRequiredMixin, MultiModelFormView):
+    form_classes = {
+        'deck_form': DeckForm,
+        'img_form': ImageForm
+    }
+    template_name = 'add_deck_form.html'
     login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs['deck_form']['user'] = self.request.user
+        kwargs['deck_form']['prefix'] = 'deck'
+        kwargs['img_form']['prefix'] = 'img'
         return kwargs
+
+    def get_objects(self):
+        self.deck_id = self.kwargs.get('deck_id', None)
+        try:
+            deck = Deck.objects.get(id=self.deck_id)
+        except ObjectDoesNotExist:
+            deck = None
+        return {
+            'deck_form': deck,
+            'img_form': deck.img if deck else None
+        }
+
+    def get_success_url(self):
+        return reverse('deck-list')
+
+    def forms_valid(self, forms):
+        deck = forms['deck_form'].save(commit=False)
+        if forms['img_form'].instance.img:
+            deck.img = forms['img_form'].save()
+        deck.save()
+        return super(DeckCreateView, self).forms_valid(forms)
 
 
 class DeckUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Deck
     form_class = DeckForm
-    template_name = 'form.html'
+    template_name = 'deck_update_form.html'
     login_url = '/accounts/login/'
     redirect_field_name = 'login'
 
@@ -147,6 +171,14 @@ class DeckUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def post(self, request, *args, **kwargs):
+        tmp = super().post(request, **kwargs)
+        if 'new_deck_img' in request.FILES:
+            deck_img = Image(img=request.FILES['new_deck_img'])
+            deck_img.save()
+            self.object.update_img(deck_img)
+        return tmp
 
     def test_func(self):
         try:
@@ -164,7 +196,7 @@ class DeckDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         try:
-            return self.request.user == Deck.objects.get(id=self.kwargs['pk'])
+            return self.request.user == Deck.objects.get(id=self.kwargs['pk']).author
         except ObjectDoesNotExist:
             raise Http404()
 
@@ -239,7 +271,6 @@ class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def post(self, request, *args, **kwargs):
         tmp = super().post(request, **kwargs)
         if 'new_question_image' in request.FILES:
-            print(request.FILES['new_question_image'])
             question_img = Image(img=request.FILES['new_question_image'])
             question_img.save()
             self.object.update_question_img(question_img)

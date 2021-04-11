@@ -21,6 +21,10 @@ class Deck(Model):
     def get_absolute_url(self):
         return reverse('deck-detail', args=[str(self.id)])
 
+    def update_img(self, img):
+        self.img = img
+        self.save()
+
     @staticmethod
     def next_red_card_index(deck_pk, index):
         cards = Card.objects.filter(deck__id=deck_pk)

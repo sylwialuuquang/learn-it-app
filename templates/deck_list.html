@@ -1,29 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container">
-        <div class="d-flex align-items-start">
-            <h1 class="display-1">Decks</h1>
-            <div class="ms-auto p-3">
-                <a href="{% url 'deck-create' %}" class="btn btn-primary">Create deck</a>
+    <div class="d-flex align-items-start mb-3">
+        <h1 class="display-1">Decks</h1>
+        <div class="ms-auto p-3">
+            <a href="{% url 'deck-create' %}" class="btn btn-primary">Create deck</a>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 gx-5">
+        {% for deck in decks %}
+        <div class="col">
+            <div class="card h-100">
+                {% if deck.img %}
+                <img src="{{ deck.img.img.url }}" class="card-img-top deck-list-img" alt="deck-img">
+                {% else %}
+                <img src="/media/images/default_deck.jpg" class="card-img-top deck-list-img" alt="deck-img">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title mt-auto">{{deck.name}}</h5>
+                    <a href="{% url 'deck-detail' deck.id %}" class="btn btn-primary">Learn it!</a>
+                </div>
             </div>
         </div>
-        <div class="row row-cols-1 row-cols-md-3 g-4 px-4">
-            {% for deck in decks %}
-                <div class="col p-5">
-                    <div class="card h-100">
-                        {% if deck.img %}
-                            <img src="{{ deck.img.img.url }}" class="card-img-top deck-img" alt="deck-img">
-                        {% else %}
-                            <img src="/media/images/default_deck.jpg" class="card-img-top deck-img" alt="deck-img">
-                        {% endif %}
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title mt-auto">{{deck.name}}</h5>
-                            <a href="{% url 'deck-detail' deck.id %}" class="btn btn-primary">Learn it!</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}

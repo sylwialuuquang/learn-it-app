@@ -31,8 +31,12 @@ body {
 }
 
 
-.deck-img {
+.deck-list-img {
     width: 100%;
     height: 15vw;
+    object-fit: cover;
+}
+
+.deck-detail-img {
     object-fit: cover;
 }

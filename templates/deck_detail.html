@@ -4,9 +4,9 @@
         <div class="d-md-flex p-4 w-50 border border-5 rounded-3">
             <div class="flex-md-shrink-0 p-2">
                 {% if deck.img %}
-                <img src="{{ deck.img.img.url }}" class="rounded-circle" alt="deck-img" width="200" height="200">
+                <img src="{{ deck.img.img.url }}" class="rounded-circle deck-detail-img" alt="deck-img" width="200" height="200">
                 {% else %}
-                <img src="/media/images/default_deck.jpg" class="rounded-circle" alt="deck-img" width="200" height="200">
+                <img src="/media/images/default_deck.jpg" class="rounded-circle deck-detail-img" alt="deck-img" width="200" height="200">
                 {% endif %}
             </div>
             <div class="flex-md-grow-1 align-self-md-center p-4">
@@ -26,9 +26,8 @@
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li><a class="dropdown-item" href="{% url 'card-list' deck.id %}">Show All Cards</a></li>
-                            <li><a class="dropdown-item" href="{% url 'add-card' deck.id %}">Add Card</a></li>
-                            <li><a class="dropdown-item" href="{% url 'deck-update' deck.id %}">Change Name</a></li>
-                            <li><a class="dropdown-item" href="{% url 'deck-delete' deck.id %}">Delete Deck</a></li>
+                            <li><a class="dropdown-item" href="{% url 'deck-update' deck.id %}">Edit</a></li>
+                            <li><a class="dropdown-item" href="{% url 'deck-delete' deck.id %}">Delete</a></li>
                         </ul>
                     </div>
                     <a href="{% url 'add-card' deck.id %}">

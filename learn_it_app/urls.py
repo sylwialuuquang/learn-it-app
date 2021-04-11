@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 
-from card.models import Image, Deck, Card
 from card.views import DeckListView, DeckDetailView, home, DeckCreateView, \
     DeckUpdateView, DeckDeleteView, CardCreateView, next_card, CardListVIew, CardDeleteView, CardUpdateView, \
     QACardView, next_red_card

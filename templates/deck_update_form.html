@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+{{ form.media }}
+  <form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="d-flex flex-column w-25">
+            {{ field.errors }}
+            <div class="mb-3">
+                {{ field.label_tag }} {{ field }}
+            </div>
+            <div class="d-flex flex-column mb-3">
+                <label for="deckImg" class="form-label">Change image:</label>
+                <input type="file" id="deckImg" name="new_deck_img" class="form-control" accept="image/png, image/jpeg, image,jpg">
+            </div>
+        </div>
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    {% endfor %}
+    <input type="submit" value="Submit" class="btn btn-primary my-2">
+  </form>
+{% endblock %}
