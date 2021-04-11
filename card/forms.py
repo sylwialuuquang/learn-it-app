@@ -26,6 +26,9 @@ class CardForm(ModelForm):
     def __init__(self, *args, **kwargs):
         self.deck = Deck.objects.get(id=kwargs.pop('deck_id'))
         super().__init__(*args, **kwargs)
+        self.fields['question'].widget.attrs.update({'class': 'form-control', 'rows': '3'})
+        self.fields['answer'].widget.attrs.update({'class': 'form-control', 'rows': '3'})
+        self.fields['status'].widget.attrs.update({'class': 'form-select'})
 
     def save(self, *args, **kwargs):
         self.instance.deck = self.deck
@@ -41,3 +44,5 @@ class ImageForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['img'].required = False
+        self.fields['img'].widget.attrs.update({'class': 'form-control'})
+        self.fields['img'].label = False

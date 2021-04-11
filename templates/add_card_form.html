@@ -6,14 +6,16 @@
 {{ form.media }}
   <form enctype="multipart/form-data" method="post">
     {% csrf_token %}
-
-    {{ forms.card_form.as_p }}
-    <label>Deck</label>
-    {{ forms.deck_form.as_p }}
-    <label>Question Img</label>
-    {{ forms.question_image_form.as_p }}
-    <label>Answer Img</label>
-    {{ forms.answer_image_form.as_p }}
+    <div class="w-50">
+      {{ forms.card_form.as_p }}
+      {{ forms.deck_form.as_p }}
+    </div>
+    <div class="w-25">
+      <label class="form-label">Question Img</label>
+      {{ forms.question_image_form.as_p }}
+      <label class="form-label">Answer Img</label>
+      {{ forms.answer_image_form.as_p }}
+    </div>
     <input type="Submit" value="Submit" class="btn btn-primary">
   </form>
 {% endblock %}
