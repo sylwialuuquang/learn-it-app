@@ -19,7 +19,7 @@ def error_403_view(request, exception):
 
 
 def home(request):
-    return render(request, 'base.html')
+    return render(request, 'home.html')
 
 
 def next_card(request, deck_pk, i):
@@ -195,6 +195,8 @@ class DeckDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     redirect_field_name = 'login'
 
     def test_func(self):
+        print(self.request.user)
+        print(Deck.objects.get(id=self.kwargs['pk']).author)
         try:
             return self.request.user == Deck.objects.get(id=self.kwargs['pk']).author
         except ObjectDoesNotExist:
@@ -296,7 +298,7 @@ class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         try:
-            return self.request.user == Deck.objects.get(id=self.kwargs['deck_pk'])
+            return self.request.user == Deck.objects.get(id=self.kwargs['deck_pk']).author
         except ObjectDoesNotExist:
             raise Http404()
 
