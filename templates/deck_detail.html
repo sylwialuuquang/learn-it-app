@@ -1,51 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <div class="d-md-flex p-4 w-50 border border-5 rounded-3">
-            <div class="flex-md-shrink-0 p-2">
-                {% if deck.img %}
-                <img src="{{ deck.img.img.url }}" class="rounded-circle deck-detail-img" alt="deck-img" width="200" height="200">
+    <div class="d-flex flex-wrap p-3 mt-4 deck-detail border border-5 rounded-3">
+        <div class="deck-1">
+            {% if deck.img %}
+            <img src="{{ deck.img.img.url }}" class="rounded-circle deck-detail-img" alt="deck-img">
+            {% else %}
+            <img src="/media/images/default_deck.jpg" class="rounded-circle deck-detail-img" alt="deck-img" width="200" height="200">
+            {% endif %}
+        </div>
+        <div class="deck-2 flex-grow-1 align-self-center p-4">
+            <h1>{{ deck.name }}</h1>
+            <span style="font-weight: bold">
+                {{mastered_questions}}/{{cards_qty}}
+                <i class="fas fa-clone"></i>
+            </span>
+        </div>
+        <div class="deck-3 d-flex align-items-end flex-column p-2">
+            <div class="d-flex flex-row-reverse">
+                <div class="dropdown">
+                    <button class="border-0 bg-transparent" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="custom-btn">
+                            <i class="fas fa-bars fa-2x"></i>
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="{% url 'card-list' deck.id %}">Show All Cards</a></li>
+                        <li><a class="dropdown-item" href="{% url 'deck-update' deck.id %}">Edit</a></li>
+                        <li><a class="dropdown-item" href="{% url 'deck-delete' deck.id %}">Delete</a></li>
+                    </ul>
+                </div>
+                <a href="{% url 'add-card' deck.id %}">
+                    <span class="custom-btn">
+                        <i class="far fa-plus-square fa-2x"></i>
+                    </span>
+                </a>
+            </div>
+            <div class="mt-auto">
+                {% if cards_qty %}
+                <a href="{% url 'card' deck.id 1 %}">
+                    <span class="custom-btn"><i class="far fa-play-circle fa-4x"></i>
+                    </span>
+                </a>
                 {% else %}
-                <img src="/media/images/default_deck.jpg" class="rounded-circle deck-detail-img" alt="deck-img" width="200" height="200">
+                <p>This deck is empty.</p>
                 {% endif %}
             </div>
-            <div class="flex-md-grow-1 align-self-md-center p-4">
-                <h1>{{ deck.name }}</h1>
-                <span style="font-weight: bold">
-                    {{mastered_questions}}/{{cards_qty}}
-                    <i class="fas fa-clone"></i>
-                </span>
-            </div>
-            <div class="d-flex align-items-md-end flex-md-column p-2">
-                <div class="d-flex flex-md-row-reverse">
-                    <div class="dropdown">
-                        <button class="border-0 bg-transparent" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span class="custom-btn">
-                                <i class="fas fa-bars fa-2x"></i>
-                            </span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" href="{% url 'card-list' deck.id %}">Show All Cards</a></li>
-                            <li><a class="dropdown-item" href="{% url 'deck-update' deck.id %}">Edit</a></li>
-                            <li><a class="dropdown-item" href="{% url 'deck-delete' deck.id %}">Delete</a></li>
-                        </ul>
-                    </div>
-                    <a href="{% url 'add-card' deck.id %}">
-                        <span class="custom-btn">
-                            <i class="far fa-plus-square fa-2x"></i>
-                        </span>
-                    </a>
-                </div>
-                <div class="mt-auto">
-                    {% if cards_qty %}
-                    <a href="{% url 'card' deck.id 1 %}">
-                        <span class="custom-btn"><i class="far fa-play-circle fa-4x"></i>
-                        </span>
-                    </a>
-                    {% else %}
-                    <p>This deck is empty.</p>
-                    {% endif %}
-                </div>
-            </div>
         </div>
+    </div>
 {% endblock %}
