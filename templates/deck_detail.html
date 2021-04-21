@@ -9,14 +9,14 @@
             <img src="/media/images/default_deck.jpg" class="rounded-circle deck-detail-img" alt="deck-img" width="200" height="200">
             {% endif %}
         </div>
-        <div class="deck-2 flex-grow-1 align-self-center p-4">
+        <div class="deck-2 align-self-center p-4">
             <h1>{{ deck.name }}</h1>
             <span style="font-weight: bold">
                 {{mastered_questions}}/{{cards_qty}}
                 <i class="fas fa-clone"></i>
             </span>
         </div>
-        <div class="deck-3 d-flex align-items-end flex-column p-2">
+        <div class="deck-3 d-flex flex-grow-1 align-items-end flex-column p-2">
             <div class="d-flex flex-row-reverse">
                 <div class="dropdown">
                     <button class="border-0 bg-transparent" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
